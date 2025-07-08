@@ -11,6 +11,8 @@ import { environment } from "../../environments/environment";
 export class AuthService {
   // Replace with your GitHub OAuth App Client ID
   private CLIENT_ID = environment.githubClientId;
+  //client_secret
+  private CLIENT_SECRET = environment.githubClientSecret;
   // Replace with your registered Redirect URI (e.g., http://localhost:4200/login)
   // Ensure this matches the "Authorization callback URL" in your GitHub OAuth App settings.
   private REDIRECT_URI = environment.githubRedirectUri;
@@ -43,7 +45,7 @@ export class AuthService {
   getAccessToken(code: string): Observable<string | null> {
     const payload = {
       client_id: this.CLIENT_ID,
-      // client_secret: 'YOUR_GITHUB_OAUTH_CLIENT_SECRET', // DO NOT EXPOSE THIS ON CLIENT-SIDE!
+      client_secret: this.CLIENT_SECRET, // DO NOT EXPOSE THIS ON CLIENT-SIDE!
       code: code,
       redirect_uri: this.REDIRECT_URI,
     };
