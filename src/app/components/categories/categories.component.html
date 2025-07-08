@@ -1,0 +1,18 @@
+<div class="container mx-auto p-4">
+    <h2 class="text-2xl font-bold mb-4">Product Categories</h2>
+    <ul class="list-disc pl-5 space-y-2">
+        @for (category of categories; track category.id) {
+            <li
+                class="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200"
+            >
+                <h3 class="text-xl font-semibold text-gray-800">
+                    {{ category.name }}
+                </h3>
+                <p class="text-gray-600">{{ category.description }}</p>
+                <span class="text-sm text-gray-400">ID: {{ category.id }}</span>
+            </li>
+        } @empty {
+            <li class="text-gray-500 p-4">No categories found.</li>
+        }
+    </ul>
+</div>
