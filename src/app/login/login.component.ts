@@ -1,14 +1,15 @@
+// --- START_FILE: login/login.component.ts ---
 import { Component, OnInit, OnDestroy } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
-import { AuthService } from "../services/auth.service"; // Corrected path for standalone
-import { UserService, GitHubUser } from "../services/user.service"; // Corrected path for standalone
-import { CommonModule } from "@angular/common"; // Required for standalone components using common directives
+import { AuthService } from "../services/auth.service";
+import { UserService, GitHubUser } from "../services/user.service";
+import { CommonModule } from "@angular/common";
 import { Subscription } from "rxjs";
 
 @Component({
   selector: "app-login",
-  standalone: true, // Mark as standalone
-  imports: [CommonModule], // Import CommonModule
+  standalone: true,
+  imports: [CommonModule],
   templateUrl: "./login.component.html",
   styleUrl: "./login.component.css",
 })
@@ -41,31 +42,36 @@ export class LoginComponent implements OnInit, OnDestroy {
 
       if (code && !this.user) {
         console.log("Authorization code received:", code);
-        this.authService.getAccessToken(code).subscribe(
-          (accessToken) => {
-            if (accessToken) {
-              this.authService.setAccessToken(accessToken);
-              this.userService.fetchUserData(accessToken).subscribe(
-                (userData) => {
-                  this.loading = false;
-                  this.router.navigate([], {
-                    queryParams: { code: null },
-                    queryParamsHandling: "merge",
-                  });
-                },
-                (err) => {
-                  this.error = "An error occurred fetching user data.";
-                  console.error(err);
-                  this.loading = false;
-                },
-              );
+        // Call your backend to exchange the code
+        this.authService.exchangeCodeWithBackend(code).subscribe(
+          (backendResponse) => {
+            if (backendResponse && backendResponse.github_access_token) {
+              const githubAccessToken = backendResponse.github_access_token;
+              const userDataFromBackend = backendResponse.user; // User data from your DB via backend
+
+              // Save the GitHub access token for direct GitHub API calls (if needed)
+              this.authService.setAccessToken(githubAccessToken);
+
+              // Update user service with data from backend (which should match GitHubUser interface)
+              this.userService.saveUserData(userDataFromBackend); // This will update currentUser$
+
+              this.loading = false;
+              // Clear the code from the URL to prevent re-processing on refresh
+              this.router.navigate([], {
+                queryParams: { code: null },
+                queryParamsHandling: "merge",
+              });
+              // Optionally redirect to profile or home after successful login
+              this.router.navigate(["/profile"]);
             } else {
-              this.error = "Failed to get access token.";
+              this.error =
+                "Failed to get access token from backend or invalid response.";
               this.loading = false;
             }
           },
           (err) => {
-            this.error = "An error occurred during authentication.";
+            this.error =
+              "An error occurred during backend authentication process.";
             console.error(err);
             this.loading = false;
           },
@@ -92,3 +98,4 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.router.navigate(["/login"]);
   }
 }
+// --- END_FILE: login/login.component.ts ---

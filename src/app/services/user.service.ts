@@ -1,8 +1,9 @@
-import { Injectable, PLATFORM_ID, Inject } from "@angular/core"; // Import Inject and PLATFORM_ID
+// --- START_FILE: user.service.ts ---
+import { Injectable, PLATFORM_ID, Inject } from "@angular/core";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Observable, of, BehaviorSubject } from "rxjs";
 import { catchError, tap } from "rxjs/operators";
-import { isPlatformBrowser } from "@angular/common"; // Import isPlatformBrowser
+import { isPlatformBrowser } from "@angular/common";
 
 // Define a simple interface for GitHub user data
 export interface GitHubUser {
@@ -45,17 +46,18 @@ export interface GitHubUser {
 })
 export class UserService {
   private GITHUB_USER_API_URL = "https://api.github.com/user";
-  // BehaviorSubject to hold the current user data, null if not logged in
+  // Optional: If you create a backend endpoint for getting your app's user profile
+  // private BACKEND_USER_PROFILE_URL = 'http://localhost:3000/api/users/profile';
+
   private currentUserSubject: BehaviorSubject<GitHubUser | null>;
   public currentUser$: Observable<GitHubUser | null>;
 
   constructor(
     private http: HttpClient,
-    @Inject(PLATFORM_ID) private platformId: Object, // Inject PLATFORM_ID
+    @Inject(PLATFORM_ID) private platformId: Object,
   ) {
     let storedUser: GitHubUser | null = null;
     if (isPlatformBrowser(this.platformId)) {
-      // Conditionally access localStorage
       const userString = localStorage.getItem("github_user_data");
       if (userString) {
         storedUser = JSON.parse(userString);
@@ -69,10 +71,11 @@ export class UserService {
 
   /**
    * Fetches user data from the GitHub API using the access token.
+   * This method is called after your backend has successfully exchanged the code and provided the GitHub access token.
    * @param accessToken The GitHub access token.
    * @returns An Observable of the GitHubUser object or null if an error occurs.
    */
-  fetchUserData(accessToken: string): Observable<GitHubUser | null> {
+  fetchUserDataFromGitHub(accessToken: string): Observable<GitHubUser | null> {
     const headers = new HttpHeaders({
       Authorization: `token ${accessToken}`,
     });
@@ -81,11 +84,11 @@ export class UserService {
       .get<GitHubUser>(this.GITHUB_USER_API_URL, { headers })
       .pipe(
         tap((userData) => {
-          console.log("Fetched user data:", userData);
+          console.log("Fetched user data from GitHub API:", userData);
           this.saveUserData(userData); // Save and update BehaviorSubject
         }),
         catchError((error) => {
-          console.error("Error fetching user data:", error);
+          console.error("Error fetching user data from GitHub API:", error);
           this.clearUserData(); // Clear data on error
           return of(null);
         }),
@@ -98,21 +101,18 @@ export class UserService {
    */
   saveUserData(userData: GitHubUser): void {
     if (isPlatformBrowser(this.platformId)) {
-      // Conditionally access localStorage
       localStorage.setItem("github_user_data", JSON.stringify(userData));
     }
-    this.currentUserSubject.next(userData); // Update the BehaviorSubject
+    this.currentUserSubject.next(userData);
     console.log("User data saved:", userData);
   }
 
   /**
-   * Retrieves user data from local storage. This method is now less critical
-   * as `currentUser$` should be used for reactive updates.
+   * Retrieves user data from local storage.
    * @returns The GitHubUser object or null if not found.
    */
   getStoredUserData(): GitHubUser | null {
     if (isPlatformBrowser(this.platformId)) {
-      // Conditionally access localStorage
       const userData = localStorage.getItem("github_user_data");
       return userData ? JSON.parse(userData) : null;
     }
@@ -124,10 +124,23 @@ export class UserService {
    */
   clearUserData(): void {
     if (isPlatformBrowser(this.platformId)) {
-      // Conditionally access localStorage
       localStorage.removeItem("github_user_data");
     }
-    this.currentUserSubject.next(null); // Clear the BehaviorSubject
+    this.currentUserSubject.next(null);
     console.log("User data cleared.");
   }
+
+  // Optional: If you want to fetch user profile from your own backend
+  // getUserProfileFromBackend(): Observable<GitHubUser | null> {
+  //   // You would typically send your app's JWT here if you implemented it
+  //   // const headers = new HttpHeaders({ 'Authorization': `Bearer ${yourAppJwtToken}` });
+  //   return this.http.get<GitHubUser>(this.BACKEND_USER_PROFILE_URL).pipe(
+  //     tap(userProfile => console.log('Fetched user profile from backend:', userProfile)),
+  //     catchError(error => {
+  //       console.error('Error fetching user profile from backend:', error);
+  //       return of(null);
+  //     })
+  //   );
+  // }
 }
+// --- END_FILE: user.service.ts ---

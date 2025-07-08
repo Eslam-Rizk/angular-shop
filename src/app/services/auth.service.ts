@@ -1,79 +1,74 @@
-import { Injectable, PLATFORM_ID, Inject } from "@angular/core"; // Import Inject and PLATFORM_ID
+// --- START_FILE: auth.service.ts ---
+import { Injectable, PLATFORM_ID, Inject } from "@angular/core";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Observable, of } from "rxjs";
 import { catchError, map, tap } from "rxjs/operators";
-import { isPlatformBrowser } from "@angular/common"; // Import isPlatformBrowser
-import { environment } from "../../environments/environment";
+import { isPlatformBrowser } from "@angular/common";
+import { environment } from "../../environments/environment"; // Assuming environment.ts is at src/environments/environment.ts
 
 @Injectable({
   providedIn: "root",
 })
 export class AuthService {
-  // Replace with your GitHub OAuth App Client ID
   private CLIENT_ID = environment.githubClientId;
-  //client_secret
-  private CLIENT_SECRET = environment.githubClientSecret;
-  // Replace with your registered Redirect URI (e.g., http://localhost:4200/login)
-  // Ensure this matches the "Authorization callback URL" in your GitHub OAuth App settings.
-  private REDIRECT_URI = environment.githubRedirectUri;
-  private GITHUB_AUTHORIZE_URL = "https://github.com/login/oauth/authorize";
-  // Using a CORS proxy for client-side demo. In production, this MUST be a backend endpoint.
-  private GITHUB_TOKEN_URL =
-    "https://corsproxy.io/?https://github.com/login/oauth/access_token";
+  private REDIRECT_URI = environment.githubRedirectUri; // This should be your Angular app's /login route
+
+  // IMPORTANT: This is now your backend endpoint for token exchange
+  private BACKEND_GITHUB_CALLBACK_URL = environment.backendGithubCallbackUrl; // **UPDATE THIS TO YOUR BACKEND URL**
+
+  private GITHUB_AUTHORIZE_URL = environment.backendGithubAuthorizeUrl;
 
   constructor(
     private http: HttpClient,
-    @Inject(PLATFORM_ID) private platformId: Object, // Inject PLATFORM_ID
+    @Inject(PLATFORM_ID) private platformId: Object,
   ) {}
 
   /**
    * Initiates the GitHub OAuth login process by redirecting the user to GitHub.
    */
   loginWithGithub(): void {
-    const scope = "user:email"; // Request email scope
+    const scope = "user:email";
+    // GitHub will redirect back to REDIRECT_URI with the 'code' parameter
     window.location.href = `${this.GITHUB_AUTHORIZE_URL}?client_id=${this.CLIENT_ID}&redirect_uri=${this.REDIRECT_URI}&scope=${scope}`;
-    // window.location.href = `${this.GITHUB_AUTHORIZE_URL}?client_id=${this.CLIENT_ID}&scope=${scope}`;
   }
 
   /**
-   * Exchanges the authorization code received from GitHub for an access token.
-   * IMPORTANT: This method is for demonstration purposes. In a real application,
-   * this token exchange MUST happen on a secure backend server to protect your client_secret.
-   * @param code The authorization code from GitHub.
-   * @returns An Observable of the access token string or null.
+   * Sends the authorization code to your backend to exchange it for an access token.
+   * @param code The authorization code received from GitHub.
+   * @returns An Observable of the backend's response (which contains GitHub access token and user data).
    */
-  getAccessToken(code: string): Observable<string | null> {
+  exchangeCodeWithBackend(code: string): Observable<any | null> {
     const payload = {
-      client_id: this.CLIENT_ID,
-      client_secret: this.CLIENT_SECRET, // DO NOT EXPOSE THIS ON CLIENT-SIDE!
       code: code,
-      redirect_uri: this.REDIRECT_URI,
+      redirect_uri: this.REDIRECT_URI, // Send redirect_uri to backend for consistency
     };
 
     const headers = new HttpHeaders({
       "Content-Type": "application/json",
-      Accept: "application/json", // Request JSON response
+      Accept: "application/json",
     });
 
+    // Make the POST request to your backend
     return this.http
-      .post<any>(this.GITHUB_TOKEN_URL, payload, { headers })
+      .post<any>(this.BACKEND_GITHUB_CALLBACK_URL, payload, { headers })
       .pipe(
-        tap((response) => console.log("GitHub Token Response:", response)),
-        map((response) => response.access_token || null),
+        tap((response) =>
+          console.log("Backend GitHub Callback Response:", response),
+        ),
+        map((response) => response), // Return the full response from backend
         catchError((error) => {
-          console.error("Error getting access token:", error);
+          console.error("Error exchanging code with backend:", error);
           return of(null);
         }),
       );
   }
 
   /**
-   * Stores the GitHub access token in local storage.
+   * Stores the GitHub access token (received from backend) in local storage.
    * @param token The access token to store.
    */
   setAccessToken(token: string): void {
     if (isPlatformBrowser(this.platformId)) {
-      // Conditionally access localStorage
       localStorage.setItem("github_access_token", token);
     }
   }
@@ -84,7 +79,6 @@ export class AuthService {
    */
   getStoredAccessToken(): string | null {
     if (isPlatformBrowser(this.platformId)) {
-      // Conditionally access localStorage
       return localStorage.getItem("github_access_token");
     }
     return null;
@@ -103,10 +97,10 @@ export class AuthService {
    */
   logout(): void {
     if (isPlatformBrowser(this.platformId)) {
-      // Conditionally access localStorage
       localStorage.removeItem("github_access_token");
-      localStorage.removeItem("github_user_data");
+      localStorage.removeItem("github_user_data"); // Also clear user data
     }
     console.log("Logged out successfully.");
   }
 }
+// --- END_FILE: auth.service.ts ---
