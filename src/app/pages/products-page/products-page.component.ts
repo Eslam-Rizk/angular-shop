@@ -1,7 +1,7 @@
 import { Component, OnInit } from "@angular/core";
-import { ProductsComponent } from "../components/products/products.component";
-import { CategoriesComponent } from "../components/categories/categories.component";
-import { ProductService } from "../services/product.service";
+import { ProductsComponent } from "../../components/products/products.component";
+import { CategoriesComponent } from "../../components/categories/categories.component";
+import { ProductService } from "../../services/product.service";
 import { CommonModule } from "@angular/common";
 
 @Component({

@@ -1,11 +1,11 @@
 import { Routes } from "@angular/router";
-import { HomeComponent } from "./home/home.component";
-import { ProfileComponent } from "./profile/profile.component";
-import { SettingsComponent } from "./settings/settings.component";
-import { AboutComponent } from "./about/about.component";
-import { NotFoundComponent } from "./not-found/not-found.component";
-import { ProductDetailsComponent } from "./product-details/product-details.component";
-import { ProductsPageComponent } from "./products-page/products-page.component";
+import { HomeComponent } from "./pages/home/home.component";
+import { ProfileComponent } from "./pages/profile/profile.component";
+import { SettingsComponent } from "./pages/settings/settings.component";
+import { AboutComponent } from "./pages/about/about.component";
+import { NotFoundComponent } from "./pages/not-found/not-found.component";
+import { ProductDetailsComponent } from "./pages/product-details/product-details.component";
+import { ProductsPageComponent } from "./pages/products-page/products-page.component";
 
 export const routes: Routes = [
   {
