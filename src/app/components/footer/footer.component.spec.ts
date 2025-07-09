@@ -8,7 +8,7 @@ describe('FooterComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [FooterComponent] // Use imports for standalone components
+      imports: [FooterComponent]
     })
     .compileComponents();
 

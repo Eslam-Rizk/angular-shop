@@ -5,7 +5,7 @@ import { SettingsComponent } from "./settings/settings.component";
 import { AboutComponent } from "./about/about.component";
 import { NotFoundComponent } from "./not-found/not-found.component";
 import { ProductDetailsComponent } from "./product-details/product-details.component";
-import { LoginComponent } from "./login/login.component"; // Import LoginComponent
+import { ProductsPageComponent } from "./products-page/products-page.component";
 
 export const routes: Routes = [
   {
@@ -19,7 +19,12 @@ export const routes: Routes = [
     title: "Home",
   },
   {
-    path: "product",
+    path: "products",
+    component: ProductsPageComponent,
+    title: "Products",
+  },
+  {
+    path: "product/:id",
     component: ProductDetailsComponent,
     title: "Product Details",
   },
@@ -37,11 +42,6 @@ export const routes: Routes = [
     path: "about",
     component: AboutComponent,
     title: "About",
-  },
-  {
-    path: "login", // Add route for the login page
-    component: LoginComponent,
-    title: "Login",
   },
   {
     path: "**",

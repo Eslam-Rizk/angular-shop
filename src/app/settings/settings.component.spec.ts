@@ -8,7 +8,7 @@ describe('SettingsComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [SettingsComponent] // Use imports for standalone components
+      imports: [SettingsComponent]
     })
     .compileComponents();
 

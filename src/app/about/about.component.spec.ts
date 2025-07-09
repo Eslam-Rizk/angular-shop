@@ -8,7 +8,7 @@ describe('AboutComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [AboutComponent] // Use imports for standalone components
+      imports: [AboutComponent]
     })
     .compileComponents();
 

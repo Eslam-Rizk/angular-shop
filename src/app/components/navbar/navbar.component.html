@@ -1,13 +1,17 @@
 <div class="navbar bg-base-100 shadow-sm">
-    <div class="flex-1">
+    <div class="flex flex-1 items-center">
+        <img src="{{ logo }}" alt="Logo" class="h-8 mr-2 rounded-full" />
         <a routerLink="/home" class="btn btn-ghost text-xl">Shop</a>
     </div>
     <div class="flex gap-2">
-        <input
-            type="text"
-            placeholder="Search"
-            class="input input-bordered w-24 md:w-auto"
-        />
+        <a
+            routerLink="/products"
+            class="btn btn-ghost text-xl"
+            [ngClass]="{
+                ' text-[#b2e240]': router.url === '/products',
+            }"
+            >Products</a
+        >
         <div class="dropdown dropdown-end">
             <div
                 tabindex="0"
@@ -16,8 +20,8 @@
             >
                 <div class="w-10 rounded-full">
                     <img
-                        [src]="(user$ | async)?.avatar_url || 'https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp'"
-                        alt="User Avatar"
+                        alt="Tailwind CSS Navbar component"
+                        src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
                     />
                 </div>
             </div>
@@ -25,19 +29,14 @@
                 tabindex="0"
                 class="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow"
             >
-                <ng-container *ngIf="isAuthenticated$ | async; else loggedOutMenu">
-                    <li>
-                        <a routerLink="/profile" class="justify-between">
-                            Profile
-                            <span class="badge">New</span>
-                        </a>
-                    </li>
-                    <li><a routerLink="/settings">Settings</a></li>
-                    <li><a (click)="handleLogoutClick()">Logout</a></li>
-                </ng-container>
-                <ng-template #loggedOutMenu>
-                    <li><a routerLink="/login">Login</a></li>
-                </ng-template>
+                <li>
+                    <a routerLink="/profile" class="justify-between">
+                        Profile
+                        <span class="badge">New</span>
+                    </a>
+                </li>
+                <li><a routerLink="/settings">Settings</a></li>
+                <li><a>Logout</a></li>
             </ul>
         </div>
     </div>

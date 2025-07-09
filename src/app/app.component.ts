@@ -5,11 +5,11 @@ import { RouterOutlet } from "@angular/router";
 
 @Component({
   selector: "app-root",
-  standalone: true, // Mark as standalone
-  imports: [RouterOutlet, NavbarComponent, FooterComponent], // Import standalone components
+  imports: [RouterOutlet, NavbarComponent, FooterComponent],
   templateUrl: "./app.component.html",
   styleUrl: "./app.component.css",
 })
 export class AppComponent {
   title = "shop";
+  logo = "assets/logo.webp";
 }

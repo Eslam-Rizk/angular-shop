@@ -1,27 +1,30 @@
-import { Component } from "@angular/core";
-import { CommonModule } from '@angular/common'; // Required for standalone components using common directives
-
-interface Category {
-  id: number;
-  name: string;
-  description: string;
-}
+import { Component, OnInit } from "@angular/core";
+import { Category } from "../../types/category";
+import { CategoryService } from "../../services/category.service";
+import { CommonModule } from "@angular/common";
+import { HttpClientModule } from "@angular/common/http";
 
 @Component({
   selector: "app-categories",
-  standalone: true, // Mark as standalone
-  imports: [CommonModule], // Import CommonModule
+  imports: [CommonModule, HttpClientModule],
   templateUrl: "./categories.component.html",
   styleUrl: "./categories.component.css",
+  standalone: true,
 })
 export class CategoriesComponent {
-  categories: Category[] = [
-    { id: 1, name: "Electronics", description: "All electronics products" },
-    { id: 2, name: "Clothing", description: "All clothing products" },
-    {
-      id: 3,
-      name: "Home & Kitchen",
-      description: "All home and kitchen products",
-    },
-  ];
+  categories: Category[] = [];
+
+  constructor(private categoryService: CategoryService) {}
+
+  ngOnInit(): void {
+    this.categoryService.getCategories().subscribe({
+      next: (categories) => {
+        this.categories = categories;
+        console.log("Categories loaded:", this.categories);
+      },
+      error: (error) => {
+        console.error("Error fetching categories:", error);
+      },
+    });
+  }
 }

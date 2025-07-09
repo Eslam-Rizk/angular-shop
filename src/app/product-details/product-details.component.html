@@ -1,1 +1,33 @@
-<p>product-details works!</p>
+<div class="flex justify-between items-center">
+    <div class="w-1/2 relative">
+        <img
+            src="{{ product.image }}"
+            alt="Shoes"
+            class="h-100 w-200 rounded-4xl p-2 m-2"
+        />
+        <p
+            class="rounded-full bg-white border-2 border-orange-400 text-black absolute top-8 right-4 p-1"
+        >
+            {{ product.rating.rate }}
+        </p>
+    </div>
+    <div class="w-1/2">
+        <div class="card-body flex flex-col gap-8">
+            <div class="flex justify-center">
+                <h2 class="card-title">{{ product.title }}</h2>
+                <h2
+                    class="ml-auto p-1 font-bold text-xl border rounded-2xl border-[#b2e240]"
+                >
+                    ${{ product.price }}
+                </h2>
+            </div>
+            <h3 class="font-bolder">Description:</h3>
+            <p>{{ product.description }}</p>
+            <div class="card-actions justify-center">
+                <button class="btn btn-primary bg-[#b2e240] text-black">
+                    Buy Now
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

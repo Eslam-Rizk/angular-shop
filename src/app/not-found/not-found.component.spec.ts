@@ -8,7 +8,7 @@ describe('NotFoundComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [NotFoundComponent] // Use imports for standalone components
+      imports: [NotFoundComponent]
     })
     .compileComponents();
 

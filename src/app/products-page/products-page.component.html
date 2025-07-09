@@ -1,0 +1,10 @@
+<div class="container p-2">
+    <div class="grid grid-cols-1 md:grid-cols-6 lg:grid-cols-12 gap-2">
+        <div class="col-span-1 md:col-span-2 lg:col-span-2">
+            <app-categories></app-categories>
+        </div>
+        <div class="col-span-1 md:col-span-4 lg:col-span-10">
+            <app-products [products]="allProducts"></app-products>
+        </div>
+    </div>
+</div>
