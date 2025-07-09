@@ -1,11 +1,5 @@
 import { Routes } from "@angular/router";
 import { HomeComponent } from "./pages/home/home.component";
-import { ProfileComponent } from "./pages/profile/profile.component";
-import { SettingsComponent } from "./pages/settings/settings.component";
-import { AboutComponent } from "./pages/about/about.component";
-import { NotFoundComponent } from "./pages/not-found/not-found.component";
-import { ProductDetailsComponent } from "./pages/product-details/product-details.component";
-import { ProductsPageComponent } from "./pages/products-page/products-page.component";
 
 export const routes: Routes = [
   {
@@ -20,32 +14,48 @@ export const routes: Routes = [
   },
   {
     path: "products",
-    component: ProductsPageComponent,
+    loadComponent: () =>
+      import("./pages/products-page/products-page.component").then(
+        (m) => m.ProductsPageComponent,
+      ),
     title: "Products",
   },
   {
     path: "product/:id",
-    component: ProductDetailsComponent,
+    loadComponent: () =>
+      import("./pages/product-details/product-details.component").then(
+        (m) => m.ProductDetailsComponent,
+      ),
     title: "Product Details",
   },
   {
     path: "profile",
-    component: ProfileComponent,
+    loadComponent: () =>
+      import("./pages/profile/profile.component").then(
+        (m) => m.ProfileComponent,
+      ),
     title: "Profile",
   },
   {
     path: "settings",
-    component: SettingsComponent,
+    loadComponent: () =>
+      import("./pages/settings/settings.component").then(
+        (m) => m.SettingsComponent,
+      ),
     title: "Settings",
   },
   {
     path: "about",
-    component: AboutComponent,
+    loadComponent: () =>
+      import("./pages/about/about.component").then((m) => m.AboutComponent),
     title: "About",
   },
   {
     path: "**",
-    component: NotFoundComponent,
+    loadComponent: () =>
+      import("./pages/not-found/not-found.component").then(
+        (m) => m.NotFoundComponent,
+      ),
     title: "Not Found",
   },
 ];
